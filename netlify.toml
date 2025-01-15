@@ -1,18 +1,22 @@
 [build]
-  command = "npm run build"
+  # Folder tempat hasil build disimpan
   publish = "dist"
+  command = "npm run build" # Perintah untuk build proyek (pastikan sudah sesuai dengan proyek Anda)
 
 [[redirects]]
-  from = "/*"
+  # Redirect untuk root ke index.html
+  from = "/"
   to = "/index.html"
   status = 200
 
 [[redirects]]
-from = "/license"
-to = "/license.html"
-status = 200
+  # Redirect untuk /about ke about.html
+  from = "/about"
+  to = "/about.html"
+  status = 200
 
 [[redirects]]
-from = "/about"
-to = "/about.html"
-status = 200
+  # Redirect untuk /license ke license.html
+  from = "/license"
+  to = "/license.html"
+  status = 200
