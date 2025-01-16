@@ -22,7 +22,7 @@ function showToast(message) {
   toast.className = 'toast';
   toast.textContent = message;
   document.body.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.classList.add('show'); // Tambahkan animasi
   }, 10);
@@ -31,6 +31,27 @@ function showToast(message) {
     toast.classList.remove('show');
     toast.addEventListener('transitionend', () => toast.remove());
   }, 3000); // Hilang setelah 3 detik
+}
+
+// Fungsi untuk menampilkan indikator mengetik
+function showTypingIndicator() {
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'typing-indicator';
+  typingDiv.innerHTML = `
+    <span class="typing-dot"></span>
+    <span class="typing-dot"></span>
+    <span class="typing-dot"></span>
+  `;
+  output.appendChild(typingDiv);
+  output.scrollTop = output.scrollHeight; // Gulir ke bawah
+  return typingDiv;
+}
+
+// Fungsi untuk menghapus indikator mengetik
+function removeTypingIndicator(indicator) {
+  if (indicator && indicator.parentElement) {
+    indicator.remove();
+  }
 }
 
 form.onsubmit = async (ev) => {
@@ -53,8 +74,8 @@ form.onsubmit = async (ev) => {
     // Tampilkan notifikasi "Generating..."
     showToast("Generating AI response...");
 
-    output.innerHTML += `<div class="assistant-message">Generating...</div>`;
-    let lastOutputIndex = output.children.length - 1;
+    // Tampilkan indikator mengetik
+    const typingIndicator = showTypingIndicator();
 
     // Call Gemini AI
     const genAI = new GoogleGenerativeAI(API_KEY);
@@ -75,8 +96,11 @@ form.onsubmit = async (ev) => {
     let md = new MarkdownIt();
     for await (let response of result.stream) {
       buffer.push(response.text());
-      output.children[lastOutputIndex].innerHTML = `<strong>AI:</strong> ${md.render(buffer.join(''))}`;
     }
+
+    // Tambahkan respons AI ke antarmuka
+    removeTypingIndicator(typingIndicator); // Hapus indikator mengetik
+    output.innerHTML += `<div class="assistant-message"><strong>AI:</strong> ${md.render(buffer.join(''))}</div>`;
 
     // Tambahkan respons AI ke riwayat percakapan
     conversationHistory.push({
@@ -87,6 +111,7 @@ form.onsubmit = async (ev) => {
     // Tampilkan notifikasi selesai
     showToast("AI response generated successfully!");
   } catch (e) {
+    removeTypingIndicator(typingIndicator); // Pastikan indikator dihapus jika terjadi kesalahan
     output.innerHTML += `<div class="error-message">Error: ${e}</div>`;
     showToast("Error generating response.");
   }
