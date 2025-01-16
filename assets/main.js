@@ -16,6 +16,23 @@ let form = document.querySelector('form');
 let promptInput = document.querySelector('input[name="prompt"]');
 let output = document.querySelector('.output');
 
+// Fungsi untuk menampilkan notifikasi sementara
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('show'); // Tambahkan animasi
+  }, 10);
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.addEventListener('transitionend', () => toast.remove());
+  }, 3000); // Hilang setelah 3 detik
+}
+
 form.onsubmit = async (ev) => {
   ev.preventDefault();
   let userMessage = promptInput.value.trim();
@@ -33,6 +50,9 @@ form.onsubmit = async (ev) => {
   output.scrollTop = output.scrollHeight; // Gulir ke bawah
 
   try {
+    // Tampilkan notifikasi "Generating..."
+    showToast("Generating AI response...");
+
     output.innerHTML += `<div class="assistant-message">Generating...</div>`;
     let lastOutputIndex = output.children.length - 1;
 
@@ -63,7 +83,11 @@ form.onsubmit = async (ev) => {
       role: 'assistant',
       parts: [{ text: buffer.join('') }]
     });
+
+    // Tampilkan notifikasi selesai
+    showToast("AI response generated successfully!");
   } catch (e) {
     output.innerHTML += `<div class="error-message">Error: ${e}</div>`;
+    showToast("Error generating response.");
   }
 };
