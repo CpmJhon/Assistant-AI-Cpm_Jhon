@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
 import MarkdownIt from 'markdown-it';
-import { maybeShowApiKeyBanner } from './gemini-api-banner';
+import { maybeShowApiKeyBanner } from './gemini-api-banner.js';
 import './assets/style.css';
 
 // 🔥🔥 FILL THIS OUT FIRST! 🔥🔥
